@@ -41,11 +41,11 @@ public class AccountServiceTest {
         String userName = "juyoung@email.com";
         String password = "password";
         Account account = Account.builder()
-                        .email(userName)
-                        .userName("juyoung")
-                        .password(password)
-                        .roles(new HashSet<>(Arrays.asList(RoleType.values())))
-                        .build();
+                .email(userName)
+                .userName("juyoung")
+                .password(password)
+                .roles(new HashSet<>(Arrays.asList(RoleType.values())))
+                .build();
 
         accountService.signUp(account);
 

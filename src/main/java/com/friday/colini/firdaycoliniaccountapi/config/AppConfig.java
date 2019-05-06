@@ -30,11 +30,11 @@ public class AppConfig {
             AccountService accountService;
 
             @Override
-            public void run(ApplicationArguments args) throws Exception {
+            public void run(ApplicationArguments args) {
                 Account account = Account.builder()
-                        .userName("juyoung")
+                        .userName("admin")
                         .password("pass")
-                        .email("juyoung@email.com")
+                        .email("admin@email.com")
                         .roles(new HashSet<>(Arrays.asList(RoleType.values())))
                         .build();
                 accountService.signUp(account);
