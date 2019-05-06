@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -31,6 +32,9 @@ public class AccountServiceTest {
     @Autowired
     AccountRepository accountRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
     @TestDescription("등록된 계정")
     public void findByUsername_Sccuccess() {
@@ -43,12 +47,12 @@ public class AccountServiceTest {
                         .roles(new HashSet<>(Arrays.asList(RoleType.values())))
                         .build();
 
-        accountRepository.save(account);
+        accountService.signUp(account);
 
         UserDetailsService userDetailsService = accountService;
         UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
         assertThat(userDetails.getUsername()).isEqualTo(userName);
-        assertThat(userDetails.getPassword()).isEqualTo(password);
+        assertThat(passwordEncoder.matches(password, userDetails.getPassword())).isTrue();
     }
 
     @Test (expected = UsernameNotFoundException.class)
