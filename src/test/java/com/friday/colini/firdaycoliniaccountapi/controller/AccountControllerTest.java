@@ -18,8 +18,4 @@ public class AccountControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Test
-    public void getAccounts() {
-
-    }
 }

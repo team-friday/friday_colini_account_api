@@ -28,14 +28,20 @@ public class AppConfig {
         return new ApplicationRunner() {
             @Autowired
             AccountService accountService;
+            @Autowired
+            AppProperties appProperties;
 
             @Override
             public void run(ApplicationArguments args) {
+                setFixtureAccount("admin", appProperties.getAdminId(), appProperties.getAdminPassword(), RoleType.ADMIN);
+                setFixtureAccount("user", appProperties.getUserId(), appProperties.getUserPassword(), RoleType.USER);
+            }
+            private void setFixtureAccount(String userName, String email, String password, RoleType role) {
                 Account account = Account.builder()
-                        .userName("admin")
-                        .password("pass")
-                        .email("admin@email.com")
-                        .roles(new HashSet<>(Arrays.asList(RoleType.values())))
+                        .userName(userName)
+                        .email(email)
+                        .password(password)
+                        .roles(new HashSet<>(Arrays.asList(role)))
                         .build();
                 accountService.signUp(account);
             }

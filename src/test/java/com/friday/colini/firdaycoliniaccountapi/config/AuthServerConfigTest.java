@@ -32,24 +32,17 @@ public class AuthServerConfigTest {
     MockMvc mockMvc;
     @Autowired
     AccountService accountService;
+    @Autowired
+    AppProperties appProperties;
 
     @Test
     @TestDescription("인증 토큰 발급 받는데 성공한다")
     public void createToken_Success() throws Exception {
-
-        String userName = "juyoung@email.com";
-        String password = "password";
-        Account account = Account.builder()
-                .email(userName)
-                .userName("juyoung")
-                .password(password)
-                .roles(new HashSet<>(Arrays.asList(RoleType.values())))
-                .build();
-
-        accountService.signUp(account);
+        String userName = appProperties.getUserId();
+        String password = appProperties.getUserPassword();
 
         mockMvc.perform(post("/oauth/token")
-                    .with(httpBasic("myApp","pass")) // basic auth 생성
+                    .with(httpBasic(appProperties.getClientId(),appProperties.getClientSecret())) // basic auth 생성
                     .param("username", userName)
                     .param("password", password)
                     .param("grant_type", "password")
@@ -57,7 +50,5 @@ public class AuthServerConfigTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("access_token").exists());
-
-
     }
 }

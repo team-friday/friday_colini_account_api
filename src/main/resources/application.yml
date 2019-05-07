@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: dev
 
 datasource:
   jpa:
@@ -15,6 +15,15 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
+
+# security
+my-app:
+  client-id: myApp
+  client-secret: pass
+  admin-id: admin@email.com
+  admin-password: admin
+  user-id: user@email.com
+  user-password: user
 
 ---
 spring:

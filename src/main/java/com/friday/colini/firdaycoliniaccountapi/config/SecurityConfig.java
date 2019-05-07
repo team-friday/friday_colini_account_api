@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
         // todo : add filter
     }
-
+    // todo : login form
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
            .formLogin()
                 .and()
            .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/api/hello").anonymous()
+                .mvcMatchers(HttpMethod.GET, "/api/**").anonymous()
                 .anyRequest().authenticated();
     }
 }

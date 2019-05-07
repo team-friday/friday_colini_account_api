@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
+    AppProperties appProperties;
+    @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -33,8 +35,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("myApp")
-                .secret(passwordEncoder.encode("pass"))
+                .withClient(appProperties.getClientId())
+                .secret(passwordEncoder.encode(appProperties.getClientSecret()))
                 .scopes("write","read")
                 .authorizedGrantTypes("password", "refresh_token")
                 .accessTokenValiditySeconds(10 * 60)
