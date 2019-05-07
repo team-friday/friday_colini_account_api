@@ -2,7 +2,6 @@ package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
-import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

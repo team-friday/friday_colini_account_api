@@ -1,8 +1,6 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
-import com.friday.colini.firdaycoliniaccountapi.domain.Account;
-import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
 import com.friday.colini.firdaycoliniaccountapi.service.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

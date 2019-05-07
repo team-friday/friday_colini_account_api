@@ -9,13 +9,15 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import javax.xml.ws.http.HTTPBinding;
+
 @Component
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId("account");
+//        resources.resourceId("account");
     }
 
     @Override
@@ -23,13 +25,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .csrf().disable()
                 .anonymous()
-                .and()
-                .authorizeRequests()
-                    .mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .anyRequest()
-                        .authenticated()
                     .and()
-                .exceptionHandling()
-                    .accessDeniedHandler(new OAuth2AccessDeniedHandler());
+                .authorizeRequests()
+                    .mvcMatchers(HttpMethod.GET, "/api/hello").permitAll()
+                    .anyRequest().authenticated();
+//                .exceptionHandling()
+//                    .accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 }

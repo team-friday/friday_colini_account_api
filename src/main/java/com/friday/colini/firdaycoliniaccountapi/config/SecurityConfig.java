@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring().mvcMatchers("/api/hello");
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        // todo : add filter
+
     }
     // todo : login form
     @Override
@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
            .formLogin()
                 .and()
            .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/api/**").anonymous()
+                .mvcMatchers(HttpMethod.GET, "/api/hello").anonymous()
                 .anyRequest().authenticated();
     }
 }

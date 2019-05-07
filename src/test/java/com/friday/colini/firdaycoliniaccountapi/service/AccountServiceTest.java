@@ -4,7 +4,6 @@ import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
 import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
-import com.sun.tools.classfile.Opcode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
