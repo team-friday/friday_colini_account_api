@@ -2,26 +2,18 @@ package com.friday.colini.firdaycoliniaccountapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
-import com.friday.colini.firdaycoliniaccountapi.config.AppConfig;
-import com.friday.colini.firdaycoliniaccountapi.config.AuthServerConfig;
-import com.friday.colini.firdaycoliniaccountapi.config.SecurityConfig;
-import com.friday.colini.firdaycoliniaccountapi.domain.Account;
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
 import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
-import com.friday.colini.firdaycoliniaccountapi.service.AccountService;
+import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,10 +21,6 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -51,7 +39,7 @@ public class AccountControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    AccountService accountService;
+    CustomUserDetailsService customUserDetailsService;
 
     @Test
     @TestDescription("id로 계정 조회")
@@ -59,7 +47,6 @@ public class AccountControllerTest {
         long id = 1;
 
         signUp_success();
-
 
         mockMvc.perform(get("/account/users/" + id)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
