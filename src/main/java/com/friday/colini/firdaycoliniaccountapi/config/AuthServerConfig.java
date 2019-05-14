@@ -1,6 +1,7 @@
+/*
 package com.friday.colini.firdaycoliniaccountapi.config;
 
-import com.friday.colini.firdaycoliniaccountapi.service.AccountService;
+import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    AccountService accountService;
+    CustomUserDetailsService customUserDetailsService;
     @Autowired
     TokenStore tokenStore;
 
@@ -48,7 +49,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .authenticationManager(authenticationManager)
-                .userDetailsService(accountService)
+                .userDetailsService(customUserDetailsService)
                 .tokenStore(tokenStore);
     }
 }
+*/
