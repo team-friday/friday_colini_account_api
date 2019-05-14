@@ -92,7 +92,7 @@ __Service name : account__
 
 | Resources Name | Path | Method | Detail |
 |--------|--------|--------|--------|
-|session|new|GET| gets thefwebpage that has the login
+|session|new|GET| gets the webpage that has the login
 |session| |POST| session authenticates credentials against database
 |session| |DELETE| destroys seession and redirect to / 
 |users| |POST| 계정 생성 (회원가입)

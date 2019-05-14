@@ -5,12 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Profile("local")
 @Component
-public class H2ServerConfiguration {
+@Profile("local")
+public class H2ServerConfig {
     @Bean
-    public Server h2TcpServer() throws Exception{
+    public Server h2TcpConfiguration() throws Exception {
         return Server.createTcpServer().start();
-
     }
 }
