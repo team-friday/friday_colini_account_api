@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account{
 
     @Id @GeneratedValue
     private Long id;
@@ -29,7 +29,7 @@ public class Account {
     private boolean status;
     @CreatedDate
     @Column(name = "create_at", updatable = false)
-    private LocalDateTime creratAt;
+    private LocalDateTime createAt;
     @LastModifiedDate
     @Column(name = "update_at")
     private LocalDateTime updateAt;
@@ -41,7 +41,7 @@ public class Account {
                    Set<RoleType> roles,
                    boolean mailYn,
                    boolean status,
-                   LocalDateTime creratAt,
+                   LocalDateTime createAt,
                    LocalDateTime updateAt) {
         this.email = email;
         this.password = password;
@@ -49,7 +49,7 @@ public class Account {
         this.roles = roles;
         this.mailYn = mailYn;
         this.status = status;
-        this.creratAt = creratAt;
+        this.createAt = createAt;
         this.updateAt = updateAt;
     }
 }

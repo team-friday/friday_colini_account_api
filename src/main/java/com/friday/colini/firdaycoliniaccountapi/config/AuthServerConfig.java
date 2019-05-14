@@ -29,6 +29,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) {
+        // user secret
         security.passwordEncoder(passwordEncoder);
     }
 

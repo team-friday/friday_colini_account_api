@@ -9,27 +9,24 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-import javax.xml.ws.http.HTTPBinding;
-
 @Component
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-//        resources.resourceId("account");
+        resources.resourceId("accounts").stateless(false);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        // todo : login form 접근 X : [error] : /login Full authentication is required to access this resourceunauthorized
         http
-                .csrf().disable()
-                .anonymous()
-                    .and()
+            .anonymous().disable()
                 .authorizeRequests()
-                    .mvcMatchers(HttpMethod.GET, "/api/hello").permitAll()
-                    .anyRequest().authenticated();
-//                .exceptionHandling()
-//                    .accessDeniedHandler(new OAuth2AccessDeniedHandler());
+                    .mvcMatchers("/account/**").authenticated()
+                    .and()
+                .exceptionHandling()
+                    .accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 }

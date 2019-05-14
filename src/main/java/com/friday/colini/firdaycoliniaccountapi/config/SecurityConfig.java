@@ -22,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     AccountService accountService;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -45,20 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().mvcMatchers("/api/hello");
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
 
-    }
-    // todo : login form
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-           .anonymous()
-                .and()
-           .formLogin()
-                .and()
-           .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/api/hello").anonymous()
-                .anyRequest().authenticated();
-    }
+
 }
