@@ -102,6 +102,5 @@ __Service name : account__
 
 ---
 ## DataBase modeling
-![db_modeling](/assert/markdown-img-paste-20190505003048528.png)
+![db_modeling](/docs/assert/markdown-img-paste-20190505003048528.png)
 ---
-

@@ -9,12 +9,15 @@ datasource:
       ddl-auto: create-drop
     properties:
       hibernate:
+        show_seq: true
         format_sql: true
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.springframework.security: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+
 
 # security
 my-app:
