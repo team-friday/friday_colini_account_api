@@ -1,20 +1,21 @@
 package com.friday.colini.firdaycoliniaccountapi.domain;
 
+
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account{
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     @Column(unique = true, nullable = false)
     private String email;
@@ -27,11 +28,11 @@ public class Account{
     private Set<RoleType> roles;
     private boolean mailYn;
     private boolean status;
-    @CreatedDate
-    @Column(name = "create_at", updatable = false)
+//    @CreatedDate
+//    @Column(name = "create_at")
     private LocalDateTime createAt;
-    @LastModifiedDate
-    @Column(name = "update_at")
+//    @LastModifiedDate
+//    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     @Builder
