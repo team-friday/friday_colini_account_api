@@ -2,7 +2,7 @@ package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
 import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
-import com.friday.colini.firdaycoliniaccountapi.service.AccountService;
+import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -26,7 +26,7 @@ public class AppConfig {
     public ApplicationRunner runner() {
         return new ApplicationRunner() {
             @Autowired
-            AccountService accountService;
+            CustomUserDetailsService customUserDetailsService;
             @Autowired
             AppProperties appProperties;
 
@@ -46,7 +46,7 @@ public class AppConfig {
                         .password(password)
                         .roles(new HashSet<>(Arrays.asList(role)))
                         .build();
-                accountService.signUp(account);
+                customUserDetailsService.signUp(account);
             }
         };
     }
