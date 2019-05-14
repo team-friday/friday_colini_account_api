@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.security.Principal;
 
 @RestController
@@ -46,6 +47,7 @@ public class SessionController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
         String accessToken = tokenProvider.generateToken(userPrincipal);
         return new JwtAuthenticationResponse(accessToken);
     }
