@@ -27,7 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     CustomUserDetailsService customUserDetailsService;
-
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -71,4 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        new RequestMatcher().matches("/**");
 //        return new JwtAuthenticationFilter(new AntPathMatcher("/**"));
 //    }
+
+    }
 }
