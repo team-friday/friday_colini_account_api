@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     // TODO : JWT SECRET KEY CHANGE ( Asymmetric or Public key )
     private String jwtSecret = "HS123";
 
-    private int jwtExpirationInMs = 10 * 60 * 60;
+    private int jwtExpirationInMs = 604800000;
 
     public String generateToken(UserPrincipal userPrincipal) {
         Date now = new Date();
@@ -34,7 +34,6 @@ public class JwtTokenProvider {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
-
         return Long.parseLong(claims.getSubject());
     }
 

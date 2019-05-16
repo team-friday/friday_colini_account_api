@@ -1,5 +1,7 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
+import com.friday.colini.firdaycoliniaccountapi.security.filter.JwtAuthenticationFilter;
+import com.friday.colini.firdaycoliniaccountapi.security.matchers.SkipPathRequestMatcher;
 import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -14,7 +16,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 @EnableWebSecurity
@@ -64,11 +69,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
 //      Add our custom JWT security filter
-//        http.addFilterBefore(jwtAuthenticationFilter(), FilterSecurityInterceptor.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
-//    protected JwtAuthenticationFilter jwtAuthenticationFilter(){
-//        new RequestMatcher().matches("/**");
-//        return new JwtAuthenticationFilter(new AntPathMatcher("/**"));
-//    }
+    @Bean
+    public SkipPathRequestMatcher skipPathRequestMatcher() {
+        return new SkipPathRequestMatcher(Arrays.asList("/session/sign-in", "/token", "/error"));
+    }
+
+    @Bean
+    protected JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(skipPathRequestMatcher());
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager());
+        return jwtAuthenticationFilter;
+    }
 }

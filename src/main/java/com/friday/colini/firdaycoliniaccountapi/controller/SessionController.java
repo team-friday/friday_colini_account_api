@@ -2,7 +2,6 @@ package com.friday.colini.firdaycoliniaccountapi.controller;
 
 import com.friday.colini.firdaycoliniaccountapi.dto.JwtAuthenticationResponse;
 import com.friday.colini.firdaycoliniaccountapi.dto.SessionDto;
-import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.security.JwtTokenProvider;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
 import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
@@ -14,9 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.ws.Response;
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/session")
@@ -47,6 +43,9 @@ public class SessionController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        // todo : UserPrincipal -> Account
+
+        // todo : history
 
         String accessToken = tokenProvider.generateToken(userPrincipal);
         return new JwtAuthenticationResponse(accessToken);

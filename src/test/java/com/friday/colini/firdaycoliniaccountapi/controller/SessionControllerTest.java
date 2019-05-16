@@ -5,12 +5,15 @@ import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
 import com.friday.colini.firdaycoliniaccountapi.config.AppProperties;
 import com.friday.colini.firdaycoliniaccountapi.dto.SessionDto;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,8 +21,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -71,6 +76,38 @@ public class SessionControllerTest {
                 .andExpect(jsonPath("tokenType").value("Bearer"))
         ;
     }
+
+    private String obtainToken(String userName,
+                               String Password) throws Exception {
+        SessionDto.SignInReq signInReq = SessionDto.SignInReq.builder()
+                .userName(userName)
+                .password(Password)
+                .build();
+
+        ResultActions perform = mockMvc.perform(post("/session/sign-in")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signInReq)));
+
+        String response = perform.andReturn().getResponse().getContentAsString();
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject object = jsonParser.parse(response).getAsJsonObject();
+
+        return "Bearer " + object.get("accessToken").toString().replace("\"", "");
+    }
+
+    @Test
+    @TestDescription("인증된 토큰은 리소스 접속에 성공한다")
+    public void Security_Interceptor() throws Exception {
+        String bearerToken = obtainToken(USER_NAME, USER_PASSWORD);
+        mockMvc.perform(get("/account/users/1")
+                .header(HttpHeaders.AUTHORIZATION, bearerToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+        ;
+    }
+
 
     @Test
     public void UsernamePasswordAuthenticationToken_Create() {
