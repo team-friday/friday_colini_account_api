@@ -6,7 +6,7 @@ datasource:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         show_seq: true
@@ -17,7 +17,7 @@ logging:
     org.hibernate.SQL: DEBUG
     org.springframework.security: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
-
+    org.springframework.security.oauth2.jwt: DEBUG
 
 # security
 my-app:
@@ -27,3 +27,13 @@ my-app:
   admin-password: admin
   user-id: user@email.com
   user-password: user
+
+security:
+  oauth2:
+    client:
+      registration:
+        google:
+          clientId: 434541373271-h977ssvpjlv003tdkfof6f49pqg8fsqr.apps.googleusercontent.com
+          clientSecret: d9k1lSwtPwrfHBtpwrp-fTac
+          scope: email, profile
+          redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"

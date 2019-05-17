@@ -3,20 +3,18 @@ package com.friday.colini.firdaycoliniaccountapi.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
-import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails, OAuth2User {
 
     private Long id;
     private String email;
@@ -24,6 +22,9 @@ public class UserPrincipal implements UserDetails {
     private String password;
     private String userName;
     private Collection<? extends GrantedAuthority> authorities;
+
+    private Map<String, Object> attributes;
+
 
     public UserPrincipal(Long id,
                          String email,
@@ -51,6 +52,20 @@ public class UserPrincipal implements UserDetails {
         );
     }
 
+    public static UserPrincipal create(Account user,
+                                       Map<String, Object> attributes) {
+        UserPrincipal userPrincipal = UserPrincipal.create(user);
+        userPrincipal.setAttributes(attributes);
+        return userPrincipal;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
     public Long getId() {
         return id;
@@ -111,5 +126,10 @@ public class UserPrincipal implements UserDetails {
     public int hashCode() {
 
         return Objects.hash(id);
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(id);
     }
 }

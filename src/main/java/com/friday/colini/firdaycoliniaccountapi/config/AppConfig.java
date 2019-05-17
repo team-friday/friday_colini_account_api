@@ -35,7 +35,6 @@ public class AppConfig {
                 setFixtureAccount("admin", appProperties.getAdminId(), appProperties.getAdminPassword(), RoleType.ADMIN);
                 setFixtureAccount("user", appProperties.getUserId(), appProperties.getUserPassword(), RoleType.USER);
             }
-
             private void setFixtureAccount(String userName,
                                            String email,
                                            String password,
@@ -46,7 +45,11 @@ public class AppConfig {
                         .password(password)
                         .roles(new HashSet<>(Arrays.asList(role)))
                         .build();
-                customUserDetailsService.signUp(account);
+                try {
+                    customUserDetailsService.loadUserByUsername(email);
+                } catch (Exception e) {
+                    customUserDetailsService.signUp(account);
+                }
             }
         };
     }

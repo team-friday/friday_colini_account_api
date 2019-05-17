@@ -1,7 +1,12 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.security.filter.JwtAuthenticationFilter;
+import com.friday.colini.firdaycoliniaccountapi.security.filter.TokenAuthenticationFilter;
 import com.friday.colini.firdaycoliniaccountapi.security.matchers.SkipPathRequestMatcher;
+import com.friday.colini.firdaycoliniaccountapi.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.friday.colini.firdaycoliniaccountapi.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.friday.colini.firdaycoliniaccountapi.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.friday.colini.firdaycoliniaccountapi.service.CustomOAuth2UserService;
 import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -15,11 +20,16 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @EnableWebSecurity
@@ -31,10 +41,27 @@ import java.util.Arrays;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    CustomUserDetailsService customUserDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    CustomOAuth2UserService customOAuth2UserService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+    @Autowired
+    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
+    @Bean
+    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+        return new TokenAuthenticationFilter();
+    }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -42,11 +69,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return httpCookieOAuth2AuthorizationRequestRepository;
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder);
+    }
+
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository() {
+        ClientRegistration google = CommonOAuth2Provider.GOOGLE.getBuilder("google")
+                .clientId("434541373271-h977ssvpjlv003tdkfof6f49pqg8fsqr.apps.googleusercontent.com")
+                .clientSecret("d9k1lSwtPwrfHBtpwrp-fTac")
+                .redirectUriTemplate("{baseUrl}/oauth2/callback/{registrationId}")
+                .scope("email", "profile")
+                .build();
+        ClientRegistration github = CommonOAuth2Provider.GITHUB.getBuilder("github")
+                .clientId("clientid")
+                .clientSecret("secret")
+                .build();
+
+        List<ClientRegistration> registrations = Arrays.asList(google, github);
+        return new InMemoryClientRegistrationRepository(registrations);
     }
 
     @Override
@@ -58,29 +107,62 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
-                    .and()
-                .csrf()
-                    .disable()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                    .authorizeRequests()
-                        .antMatchers("/session/**").permitAll()
-                .anyRequest().authenticated();
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf()
+                .disable()
+                .formLogin()
+                .disable()
+                .httpBasic()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                .and()
+                .authorizeRequests()
+                .antMatchers("/",
+                        "/error", "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js")
+                .permitAll()
+                .antMatchers("/auth/**", "/oauth2/**").permitAll()
+                .antMatchers("/session/sign-in", "/token", "/error", "/session", "/login", "/userinfo", "/")
+                .permitAll()
+                .and()
+                .oauth2Login()
+                .loginPage("/session")
+                .authorizationEndpoint()
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .baseUri("/oauth2/authorize")
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/oauth2/callback/*")
+                .and()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
+        ;
 
 //      Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
+
     @Bean
     public SkipPathRequestMatcher skipPathRequestMatcher() {
-        return new SkipPathRequestMatcher(Arrays.asList("/session/sign-in", "/token", "/error"));
+        return new SkipPathRequestMatcher(Arrays.asList("/session/sign-in", "/token", "/error", "/session", "/oauth2/**", "/login", "/userinfo", "/"));
     }
 
     @Bean
     protected JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(skipPathRequestMatcher());
-        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        return jwtAuthenticationFilter;
+        return new JwtAuthenticationFilter();
     }
 }

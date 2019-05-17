@@ -43,7 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Account account = accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         return UserPrincipal.create(account);
-//        return new User(account.getEmail(), account.getPassword(), authorities(account.getRoles()));
     }
 
     // This method is used by JWTAuthenticationFilter
