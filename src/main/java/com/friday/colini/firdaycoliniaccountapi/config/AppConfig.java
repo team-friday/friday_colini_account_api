@@ -35,6 +35,7 @@ public class AppConfig {
                 setFixtureAccount("admin", appProperties.getAdminId(), appProperties.getAdminPassword(), RoleType.ADMIN);
                 setFixtureAccount("user", appProperties.getUserId(), appProperties.getUserPassword(), RoleType.USER);
             }
+
             private void setFixtureAccount(String userName,
                                            String email,
                                            String password,

@@ -2,6 +2,17 @@ spring:
   profiles:
     active: dev
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 434541373271-h977ssvpjlv003tdkfof6f49pqg8fsqr.apps.googleusercontent.com
+            clientSecret: d9k1lSwtPwrfHBtpwrp-fTac
+            scope: email, profile
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+
+
 datasource:
   jpa:
     open-in-view: false
@@ -21,6 +32,10 @@ logging:
 
 # security
 my-app:
+  auth:
+    jwt:
+      secret: HS123
+      expiration: 360000
   client-id: myApp
   client-secret: pass
   admin-id: admin@email.com
@@ -28,12 +43,3 @@ my-app:
   user-id: user@email.com
   user-password: user
 
-security:
-  oauth2:
-    client:
-      registration:
-        google:
-          clientId: 434541373271-h977ssvpjlv003tdkfof6f49pqg8fsqr.apps.googleusercontent.com
-          clientSecret: d9k1lSwtPwrfHBtpwrp-fTac
-          scope: email, profile
-          redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"

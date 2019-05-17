@@ -13,7 +13,6 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    // TODO : JWT SECRET KEY CHANGE ( Asymmetric or Public key )
     private String jwtSecret = "HS123";
 
     private int jwtExpirationInMs = 604800000;
@@ -61,7 +60,6 @@ public class JwtTokenProvider {
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-        //appProperties.getAuth().getTokenSecret();
 
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))

@@ -1,4 +1,4 @@
-package com.friday.colini.firdaycoliniaccountapi.config;
+package com.friday.colini.firdaycoliniaccountapi.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

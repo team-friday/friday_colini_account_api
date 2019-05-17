@@ -34,19 +34,6 @@ public class JwtTokenProviderTest {
     private final String JWt_SECRET_KEY = "HS123";
     private String jwt_token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNTU3OTc2MTIwLCJleHAiOjE1NTc5NzYxMjB9.NZLDeWA5qR1beZS-yA00qrujc3PkSdzPaedS8FLjgqQJWCZ2hGb85FHB1TKRv8Dc388mceWHvQIlHrPvv52ypw";
 
-
-    @Test
-    public void converted_JWT_token() {
-        String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxOSIsImlhdCI6MTU1ODA3MDc2NSwiZXhwIjoxNTU4Njc1NTY1fQ.l0YU1ds-JR-NGjAnmkrY7lslYU35EcR2IbhV_EYO5qOxKIsmMHAXlWVH2JjsYJZP_d6gddiTjqUBIFR9925TJg";
-        boolean validate = jwtTokenProvider.validateToken(token);
-        Claims body = Jwts.parser()
-                .setSigningKey(JWt_SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        System.out.println(":::bodky: " + body);
-        assertThat(validate).isTrue();
-    }
-
     @Before
     public void token_generator() throws Exception {
         UserPrincipal userPrincipal = getUserPrincipal(USER_NAME, PASSWORD);

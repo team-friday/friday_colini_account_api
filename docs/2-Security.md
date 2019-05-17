@@ -12,3 +12,17 @@ response 결과값을 Cookie에 임시 저장 후 인증서버(ex) google)에서
 
 - 토큰이 있을 시 : 토큰으로 인증정보 확인한다.
 - 토큰 만료 시 처리 : 구상중
+
+## Todo
+-[ ] Create JWT response model
+-[ ] 토큰 부여 방법 
+-[ ] 리팩토링 
+-[ ] Role relation change 1:1
+-[ ] Accouunt insert `Provider`(1:N), `ProviderId`
+-[ ] Exception 처리 
+
+### 참고
+[Spring Security 5 OAuth 2.0 Login and Sign Up in Stateless REST Web Services](https://dzone.com/articles/spring-security-5-oauth-20-login-and-signup-in-sta)
+[callicoder](https://github.com/callicoder/spring-boot-react-oauth2-social-login-demo/blob/master/spring-social/src/main/java/com/example/springsocial/config/AppProperties.java)
+
+

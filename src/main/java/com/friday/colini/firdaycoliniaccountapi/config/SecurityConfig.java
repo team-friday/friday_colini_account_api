@@ -1,5 +1,6 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
+import com.friday.colini.firdaycoliniaccountapi.security.RestAuthenticationEntryPoint;
 import com.friday.colini.firdaycoliniaccountapi.security.filter.JwtAuthenticationFilter;
 import com.friday.colini.firdaycoliniaccountapi.security.filter.TokenAuthenticationFilter;
 import com.friday.colini.firdaycoliniaccountapi.security.matchers.SkipPathRequestMatcher;
@@ -20,16 +21,11 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 @EnableWebSecurity
@@ -81,23 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder);
     }
 
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        ClientRegistration google = CommonOAuth2Provider.GOOGLE.getBuilder("google")
-                .clientId("434541373271-h977ssvpjlv003tdkfof6f49pqg8fsqr.apps.googleusercontent.com")
-                .clientSecret("d9k1lSwtPwrfHBtpwrp-fTac")
-                .redirectUriTemplate("{baseUrl}/oauth2/callback/{registrationId}")
-                .scope("email", "profile")
-                .build();
-        ClientRegistration github = CommonOAuth2Provider.GITHUB.getBuilder("github")
-                .clientId("clientid")
-                .clientSecret("secret")
-                .build();
-
-        List<ClientRegistration> registrations = Arrays.asList(google, github);
-        return new InMemoryClientRegistrationRepository(registrations);
-    }
-
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -105,11 +84,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        sessionCreationPolicy(http);
         http
                 .cors()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf()
                 .disable()
@@ -121,18 +98,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/",
-                        "/error", "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js")
+                .antMatchers("/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js")
                 .permitAll()
-                .antMatchers("/auth/**", "/oauth2/**").permitAll()
-                .antMatchers("/session/sign-in", "/token", "/error", "/session", "/login", "/userinfo", "/")
+                .antMatchers("/oauth2/**")
+                .permitAll()
+                .antMatchers("/session**", "/token", "/error", "/")
                 .permitAll()
                 .and()
                 .oauth2Login()
@@ -149,16 +119,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler);
-        ;
 
 //      Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
+    protected void sessionCreationPolicy(HttpSecurity http) throws Exception {
+        // No session
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
 
     @Bean
     public SkipPathRequestMatcher skipPathRequestMatcher() {
-        return new SkipPathRequestMatcher(Arrays.asList("/session/sign-in", "/token", "/error", "/session", "/oauth2/**", "/login", "/userinfo", "/"));
+        return new SkipPathRequestMatcher(Arrays.asList("/token", "/error", "/session**", "/oauth2/**", "/"));
     }
 
     @Bean
