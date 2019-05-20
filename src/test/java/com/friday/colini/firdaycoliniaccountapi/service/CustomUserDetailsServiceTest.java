@@ -69,7 +69,7 @@ public class CustomUserDetailsServiceTest {
                 .email(account.getEmail())
                 .userName(account.getUserName())
                 .password(account.getPassword())
-                .roles(account.getRoles())
+                .roles(account.getRole())
                 .build();
     }
 

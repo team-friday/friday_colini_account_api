@@ -11,9 +11,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 @Component
 public class AppConfig {
 
@@ -44,7 +41,7 @@ public class AppConfig {
                         .userName(userName)
                         .email(email)
                         .password(password)
-                        .roles(new HashSet<>(Arrays.asList(role)))
+                        .role(role)
                         .build();
                 try {
                     customUserDetailsService.loadUserByUsername(email);

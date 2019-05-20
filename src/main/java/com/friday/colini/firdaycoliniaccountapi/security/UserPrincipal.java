@@ -8,11 +8,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails, OAuth2User {
 
@@ -22,9 +21,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     private String password;
     private String userName;
     private Collection<? extends GrantedAuthority> authorities;
-
     private Map<String, Object> attributes;
-
 
     public UserPrincipal(Long id,
                          String email,
@@ -39,9 +36,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     }
 
     public static UserPrincipal create(Account account) {
-        List<GrantedAuthority> authorities = account.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.name())
-        ).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UserPrincipal(
                 account.getId(),
@@ -58,6 +53,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
         userPrincipal.setAttributes(attributes);
         return userPrincipal;
     }
+
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
@@ -112,20 +108,6 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserPrincipal that = (UserPrincipal) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id);
     }
 
     @Override

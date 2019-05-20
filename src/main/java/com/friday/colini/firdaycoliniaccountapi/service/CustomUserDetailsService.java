@@ -8,7 +8,6 @@ import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,9 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.HashSet;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -32,10 +31,18 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Account signUp(AccountDto.SignUpReq accountReq){
+    public Account signUp(AccountDto.SignUpReq accountReq) {
         accountReq.encodePassword(passwordEncoder, accountReq.getPassword());
+
+
         Account account = accountReq.toEntity();
         return accountRepository.save(account);
+    }
+
+    public Account search(long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException(id));
+        return account;
     }
 
     @Override
@@ -50,19 +57,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
-
-        return new User(account.getEmail(), account.getPassword(), authorities(account.getRoles()));
+        return UserPrincipal.create(account);
     }
 
-    private Collection<? extends GrantedAuthority> authorities(Set<RoleType> roles) {
-        return roles.stream()
-                .map(roleType -> new SimpleGrantedAuthority("ROLE_" + roleType.name()))
-                .collect(Collectors.toSet());
+    private Collection<? extends GrantedAuthority> authorities(RoleType role) {
+        return new HashSet<>(Arrays.asList(new SimpleGrantedAuthority(role.name())));
     }
 
-    public Account search(long id) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundException(id));
-        return account;
-    }
 }

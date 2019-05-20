@@ -7,15 +7,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 public class AccountDto {
@@ -30,19 +28,19 @@ public class AccountDto {
         @NotEmpty(message = "userName is wrong")
         private String userName;
         @NotEmpty(message = "role is wrong")
-        private Set<RoleType> roles;
+        private RoleType role;
         private boolean mailYn;
 
         @Builder
         public SignUpReq(@NotEmpty String email,
                          @NotEmpty String password,
                          @NotEmpty String userName,
-                         @NotEmpty Set<RoleType> roles,
+                         @NotEmpty RoleType role,
                          boolean mailYn) {
             this.email = email;
             this.password = password;
             this.userName = userName;
-            this.roles = roles;
+            this.role = role;
             this.mailYn = mailYn;
         }
 
@@ -51,7 +49,7 @@ public class AccountDto {
                     .userName(userName)
                     .email(email)
                     .password(password)
-                    .roles(roles)
+                    .role(role)
                     .mailYn(mailYn)
                     .status(true)
                     .build();
@@ -103,7 +101,7 @@ public class AccountDto {
                      .userName(account.getUserName())
                      .mailYn(account.isMailYn())
                      .status(account.isStatus())
-                     .roles(account.getRoles())
+                     .roles(new HashSet<>(Arrays.asList(account.getRole())))
                      .createAt(account.getCreateAt())
                      .updateAt(account.getCreateAt())
                      .build();

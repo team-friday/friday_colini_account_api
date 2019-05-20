@@ -13,9 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -52,7 +49,7 @@ public class JwtTokenProviderTest {
                 .userName("user")
                 .email(email)
                 .password(password)
-                .roles(new HashSet<>(Arrays.asList(RoleType.USER)))
+                .role(RoleType.USER)
                 .build();
         account.setId((long) 2);
         return account;

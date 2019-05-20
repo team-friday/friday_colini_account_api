@@ -19,7 +19,8 @@ response 결과값을 Cookie에 임시 저장 후 인증서버(ex) google)에서
 -[ ] 리팩토링 
 -[ ] Role relation change 1:1
 -[ ] Accouunt insert `Provider`(1:N), `ProviderId`
--[ ] Exception 처리 
+-[ ] Exception 처리
+-[ ] build.gradle compile > implement 
 
 ### 참고
 [Spring Security 5 OAuth 2.0 Login and Sign Up in Stateless REST Web Services](https://dzone.com/articles/spring-security-5-oauth-20-login-and-signup-in-sta)

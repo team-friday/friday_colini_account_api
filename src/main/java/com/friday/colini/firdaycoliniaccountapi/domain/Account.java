@@ -26,39 +26,36 @@ public class Account {
     @Column(nullable = false)
     private String userName;
     private String imageUrl;
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(value = EnumType.STRING)
-    private Set<RoleType> roles;
+    private RoleType role;
     private boolean mailYn;
     private boolean status;
-    private String providerId;
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(value = EnumType.STRING)
-    private AuthProvider provider;
-    //        @CreatedDate
-//    @Column(name = "create_at")
+    private Set<AuthProviders> providers;
+    private String providerId;
     private LocalDateTime createAt;
-    //    @LastModifiedDate
-//    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     @Builder
     public Account(String email,
                    String password,
                    String userName,
-                   Set<RoleType> roles,
+                   RoleType role,
                    boolean mailYn,
                    boolean status,
+                   Set<AuthProviders> providers,
                    LocalDateTime createAt,
                    LocalDateTime updateAt) {
         this.email = email;
         this.password = password;
         this.userName = userName;
-        this.roles = roles;
+        this.role = role;
         this.mailYn = mailYn;
         this.status = status;
         this.createAt = createAt;
         this.updateAt = updateAt;
-        this.provider = AuthProvider.local;
+        this.providers = new HashSet<>(Arrays.asList(AuthProviders.local));
     }
 
     public Account(
@@ -67,16 +64,16 @@ public class Account {
             String imageUrl,
             boolean mailYn,
             String providerId,
-            AuthProvider provider
+            AuthProviders providers
     ) {
         this.userName = userName;
         this.email = email;
         this.password = "Auth2 SignUp";
         this.imageUrl = imageUrl;
-        this.roles = new HashSet<>(Arrays.asList(RoleType.USER));
+        this.role = RoleType.USER;
         this.mailYn = mailYn;
         this.status = true;
         this.providerId = providerId;
-        this.provider = provider;
+        this.providers = new HashSet<>(Arrays.asList(providers));
     }
 }

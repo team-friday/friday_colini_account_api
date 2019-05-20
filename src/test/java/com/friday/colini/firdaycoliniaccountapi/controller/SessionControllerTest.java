@@ -3,7 +3,7 @@ package com.friday.colini.firdaycoliniaccountapi.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
 import com.friday.colini.firdaycoliniaccountapi.config.AppProperties;
-import com.friday.colini.firdaycoliniaccountapi.dto.SessionDto;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignInRequest;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -60,8 +60,8 @@ public class SessionControllerTest {
     @Test
     @TestDescription("로그인 성공 할 시 JWT 토큰 발급한다")
     public void login_Success() throws Exception {
-        SessionDto.SignInReq signInReq = SessionDto.SignInReq.builder()
-                .userName(USER_NAME)
+        SignInRequest signInReq = SignInRequest.builder()
+                .username(USER_NAME)
                 .password(USER_PASSWORD)
                 .build();
 
@@ -79,9 +79,9 @@ public class SessionControllerTest {
 
     private String obtainToken(String userName,
                                String Password) throws Exception {
-        SessionDto.SignInReq signInReq = SessionDto.SignInReq.builder()
-                .userName(userName)
-                .password(Password)
+        SignInRequest signInReq = SignInRequest.builder()
+                .username(USER_NAME)
+                .password(USER_PASSWORD)
                 .build();
 
         ResultActions perform = mockMvc.perform(post("/session/sign-in")
@@ -90,10 +90,8 @@ public class SessionControllerTest {
                 .content(objectMapper.writeValueAsString(signInReq)));
 
         String response = perform.andReturn().getResponse().getContentAsString();
-
         JsonParser jsonParser = new JsonParser();
         JsonObject object = jsonParser.parse(response).getAsJsonObject();
-
         return "Bearer " + object.get("accessToken").toString().replace("\"", "");
     }
 
@@ -102,6 +100,17 @@ public class SessionControllerTest {
     public void Security_Interceptor() throws Exception {
         String bearerToken = obtainToken(USER_NAME, USER_PASSWORD);
         mockMvc.perform(get("/account/users/1")
+                .header(HttpHeaders.AUTHORIZATION, bearerToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @TestDescription("인증된 토큰은 리소스 접속에 성공한다")
+    public void Security_Interceptor2() throws Exception {
+        String bearerToken = obtainToken(USER_NAME, USER_PASSWORD);
+        mockMvc.perform(get("/account/users/me")
                 .header(HttpHeaders.AUTHORIZATION, bearerToken))
                 .andDo(print())
                 .andExpect(status().isOk())

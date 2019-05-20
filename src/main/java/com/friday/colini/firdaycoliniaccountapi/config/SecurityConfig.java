@@ -1,7 +1,6 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.security.RestAuthenticationEntryPoint;
-import com.friday.colini.firdaycoliniaccountapi.security.filter.JwtAuthenticationFilter;
 import com.friday.colini.firdaycoliniaccountapi.security.filter.TokenAuthenticationFilter;
 import com.friday.colini.firdaycoliniaccountapi.security.matchers.SkipPathRequestMatcher;
 import com.friday.colini.firdaycoliniaccountapi.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -12,6 +11,7 @@ import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,11 +23,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
+@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
         securedEnabled = true,
@@ -41,16 +40,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     CustomOAuth2UserService customOAuth2UserService;
-
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
     @Autowired
     private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-
     @Autowired
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
@@ -90,26 +86,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                 .disable()
-                .formLogin()
-                .disable()
                 .httpBasic()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js")
+                .antMatchers("/error", "/")
                 .permitAll()
-                .antMatchers("/oauth2/**")
-                .permitAll()
-                .antMatchers("/session**", "/token", "/error", "/")
-                .permitAll()
+                .antMatchers("/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js").permitAll()
+                .antMatchers("/token", "/session/**", "/oauth2/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .loginPage("/session")
                 .authorizationEndpoint()
-                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                 .baseUri("/oauth2/authorize")
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                 .and()
                 .redirectionEndpoint()
                 .baseUri("/oauth2/callback/*")
@@ -118,26 +111,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(customOAuth2UserService)
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler);
-
+                .failureHandler(oAuth2AuthenticationFailureHandler)
+        ;
 //      Add our custom JWT security filter
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     protected void sessionCreationPolicy(HttpSecurity http) throws Exception {
-        // No session
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
-
 
     @Bean
     public SkipPathRequestMatcher skipPathRequestMatcher() {
         return new SkipPathRequestMatcher(Arrays.asList("/token", "/error", "/session**", "/oauth2/**", "/"));
     }
 
-    @Bean
-    protected JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter();
-    }
 }

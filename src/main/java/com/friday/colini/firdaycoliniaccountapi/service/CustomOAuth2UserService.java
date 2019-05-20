@@ -1,7 +1,7 @@
 package com.friday.colini.firdaycoliniaccountapi.service;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
-import com.friday.colini.firdaycoliniaccountapi.domain.AuthProvider;
+import com.friday.colini.firdaycoliniaccountapi.domain.AuthProviders;
 import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
 import com.friday.colini.firdaycoliniaccountapi.security.oauth.user.OAuth2UserInfo;
@@ -27,14 +27,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
-        System.out.println(oAuth2UserRequest);
-
         Optional<Account> accountOptional = accountRepository.findByEmail(oAuth2UserInfo.getEmail());
 
         Account account;
         if (accountOptional.isPresent()) {
             account = accountOptional.get();
-            // todo : auth provider set
+            // todo : auth providers set
         } else {
             // register
             Account accountDto = new Account(
@@ -43,7 +41,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     oAuth2UserInfo.getImageUrl(),
                     oAuth2UserInfo.isEmailVerified(),
                     oAuth2UserInfo.getId(),
-                    AuthProvider.valueOf(registrationId)
+                    AuthProviders.valueOf(registrationId)
             );
             account = accountRepository.save(accountDto);
         }

@@ -1,31 +1,26 @@
 package com.friday.colini.firdaycoliniaccountapi.controller;
 
 import com.friday.colini.firdaycoliniaccountapi.dto.JwtAuthenticationResponse;
-import com.friday.colini.firdaycoliniaccountapi.dto.SessionDto;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignInRequest;
 import com.friday.colini.firdaycoliniaccountapi.security.JwtTokenProvider;
-import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
 import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/session")
 public class SessionController {
 
@@ -48,7 +43,6 @@ public class SessionController {
 
     @GetMapping
     public String loginPage(Model model) {
-
         Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
         Iterable<ClientRegistration> clientRegistrations = null;
@@ -62,35 +56,17 @@ public class SessionController {
         return "login";
     }
 
-    @Autowired
-    private OAuth2AuthorizedClientService authorizedClientService;
-
-    @GetMapping("/loginSuccess")
-    public String getLoginInfo(Model model,
-                               OAuth2AuthenticationToken authentication) {
-        OAuth2AuthorizedClient client = authorizedClientService
-                .loadAuthorizedClient(
-                        authentication.getAuthorizedClientRegistrationId(),
-                        authentication.getName());
-        //...
-        return "loginSuccess";
-    }
-
-
-    @PostMapping("/sign-in")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public JwtAuthenticationResponse signIn(@RequestBody SessionDto.SignInReq signInReq) {
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signInReq.getUserName(), signInReq.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
+    @PostMapping(value = "/sign-in")
+    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest signInRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        signInRequest.getUsername(),
+                        signInRequest.getPassword()
+                )
+        );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        // todo : UserPrincipal -> Account
-        // todo : history
-        String accessToken = tokenProvider.generateToken(userPrincipal);
-        return new JwtAuthenticationResponse(accessToken);
+        String token = tokenProvider.createToken(authentication);
+        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 }
 

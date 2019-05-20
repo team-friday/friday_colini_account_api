@@ -18,8 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -78,7 +76,7 @@ public class AccountControllerTest {
                 .email("juyoung@email.com")
                 .password("password")
                 .mailYn(false)
-                .roles(new HashSet<>(Arrays.asList(RoleType.USER)))
+                .role(RoleType.USER)
                 .build();
 
         mockMvc.perform(post("/account/users")
@@ -99,7 +97,7 @@ public class AccountControllerTest {
                 .email("juyoung@email.com")
                 .password("password")
                 .mailYn(false)
-                .roles(new HashSet<>(Arrays.asList(RoleType.USER)))
+                .role(RoleType.USER)
                 .build();
 
 //        given(accountService.signUp(any())).willReturn(account.toEntity());

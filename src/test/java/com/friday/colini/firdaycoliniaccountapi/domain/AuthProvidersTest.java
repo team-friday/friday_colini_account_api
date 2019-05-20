@@ -4,14 +4,14 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthProviderTest {
+public class AuthProvidersTest {
 
     @Test
     public void authProvider_return() {
         String registeredId = "google";
 
-        AuthProvider authProvider = AuthProvider.valueOf(registeredId);
+        AuthProviders authProviders = AuthProviders.valueOf(registeredId);
 
-        assertThat(authProvider.name()).isEqualTo(registeredId);
+        assertThat(authProviders.name()).isEqualTo(registeredId);
     }
 }
