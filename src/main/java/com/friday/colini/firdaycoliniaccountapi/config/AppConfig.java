@@ -1,7 +1,7 @@
 package com.friday.colini.firdaycoliniaccountapi.config;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
-import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignUpRequest;
 import com.friday.colini.firdaycoliniaccountapi.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -37,7 +37,7 @@ public class AppConfig {
                                            String email,
                                            String password,
                                            RoleType role) {
-                AccountDto.SignUpReq account = AccountDto.SignUpReq.builder()
+                SignUpRequest account = SignUpRequest.builder()
                         .userName(userName)
                         .email(email)
                         .password(password)

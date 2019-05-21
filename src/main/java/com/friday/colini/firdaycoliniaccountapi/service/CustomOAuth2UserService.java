@@ -32,9 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Account account;
         if (accountOptional.isPresent()) {
             account = accountOptional.get();
-            // todo : auth providers set
         } else {
-            // register
             Account accountDto = new Account(
                     oAuth2UserInfo.getName(),
                     oAuth2UserInfo.getEmail(),

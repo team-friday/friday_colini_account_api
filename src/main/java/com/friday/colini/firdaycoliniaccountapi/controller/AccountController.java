@@ -1,7 +1,8 @@
 package com.friday.colini.firdaycoliniaccountapi.controller;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
-import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignUpRequest;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignUpResponse;
 import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.security.CurrentUser;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
@@ -26,9 +27,16 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountDto.Res signUp(@RequestBody @Valid AccountDto.SignUpReq accountReq){
-        Account account = customUserDetailsService.signUp(accountReq);
-        return AccountDto.Res.of(account);
+    public SignUpResponse signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+        Account account = customUserDetailsService.signUp(signUpRequest);
+        return SignUpResponse.of(account);
+    }
+
+    @GetMapping("/me")
+    public Account getAccount(@CurrentUser UserPrincipal userPrincipal) {
+        Account account = accountRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new IllegalArgumentException());
+        return account;
     }
 
     @GetMapping("/{id}")
@@ -38,11 +46,5 @@ public class AccountController {
         return account;
     }
 
-    @GetMapping("/me")
-    public Account getAccount(@CurrentUser UserPrincipal userPrincipal) {
-        Account account = accountRepository.findById(userPrincipal.getId())
-                .orElseThrow(() -> new IllegalArgumentException());
-        return account;
-    }
 
 }

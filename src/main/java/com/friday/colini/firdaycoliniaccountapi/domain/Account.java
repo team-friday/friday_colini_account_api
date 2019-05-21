@@ -74,6 +74,7 @@ public class Account {
         this.mailYn = mailYn;
         this.status = true;
         this.providerId = providerId;
-        this.providers = new HashSet<>(Arrays.asList(providers));
+        this.providers = new HashSet<>(Arrays.asList(providers
+        ));
     }
 }

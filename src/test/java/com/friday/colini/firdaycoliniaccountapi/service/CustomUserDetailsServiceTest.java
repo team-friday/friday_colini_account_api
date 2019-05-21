@@ -2,7 +2,8 @@ package com.friday.colini.firdaycoliniaccountapi.service;
 
 import com.friday.colini.firdaycoliniaccountapi.common.TestDescription;
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
-import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
+import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignUpRequest;
 import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static com.friday.colini.firdaycoliniaccountapi.AccountAbstract.accountOf;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -46,7 +46,13 @@ public class CustomUserDetailsServiceTest {
         String userName = "juyoung@email.com";
         String password = "password";
 
-        Account expected = accountOf("juyoung", userName, passwordEncoder.encode(password));
+        Account expected = Account.builder()
+                .userName("juyoung")
+                .email(userName)
+                .password(passwordEncoder.encode(password))
+                .status(true)
+                .role(RoleType.USER)
+                .build();
         given(accountRepository.save(any())).willReturn(expected);
 
         Account newAccount = customUserDetailsService.signUp(builderSignUpSeq(expected));
@@ -64,12 +70,12 @@ public class CustomUserDetailsServiceTest {
     }
 
 
-    private AccountDto.SignUpReq builderSignUpSeq(Account account) {
-        return AccountDto.SignUpReq.builder()
+    private SignUpRequest builderSignUpSeq(Account account) {
+        return SignUpRequest.builder()
                 .email(account.getEmail())
                 .userName(account.getUserName())
                 .password(account.getPassword())
-                .roles(account.getRole())
+                .role(account.getRole())
                 .build();
     }
 

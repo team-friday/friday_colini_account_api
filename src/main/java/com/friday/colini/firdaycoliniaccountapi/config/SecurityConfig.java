@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -37,7 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
     @Autowired
     CustomOAuth2UserService customOAuth2UserService;
     @Autowired
@@ -92,14 +92,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/error", "/")
-                .permitAll()
+                .antMatchers("/error", "/").permitAll()
                 .antMatchers("/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js").permitAll()
-                .antMatchers("/token", "/session/**", "/oauth2/**").permitAll()
+                .antMatchers("/token", "/session/**", "/oauth2/**", "/session").permitAll()
+                .antMatchers(HttpMethod.POST, "/account/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .loginPage("/session")
+                .loginPage("/session/new")
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(cookieAuthorizationRequestRepository())
@@ -113,7 +113,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
         ;
-//      Add our custom JWT security filter
+
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -124,7 +124,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SkipPathRequestMatcher skipPathRequestMatcher() {
-        return new SkipPathRequestMatcher(Arrays.asList("/token", "/error", "/session**", "/oauth2/**", "/"));
+        return new SkipPathRequestMatcher(Arrays.asList("/token", "/error", "/session**", "/oauth2/**", "/", "/session"));
     }
 
 }

@@ -9,7 +9,7 @@
 <h1>Login page</h1>
 <p>Example user: user / password</p>
 <p th:if="${loginError}" class="error">Wrong user or password</p>
-<form th:action="@{/session/sign-in}" method="post">
+<form th:action="@{/session}" method="post">
     <label for="username">Username</label>:
     <input type="text" id="username" name="username" autofocus="autofocus"/> <br/>
     <label for="password">Password</label>:

@@ -2,7 +2,7 @@ package com.friday.colini.firdaycoliniaccountapi.service;
 
 import com.friday.colini.firdaycoliniaccountapi.domain.Account;
 import com.friday.colini.firdaycoliniaccountapi.domain.RoleType;
-import com.friday.colini.firdaycoliniaccountapi.dto.AccountDto;
+import com.friday.colini.firdaycoliniaccountapi.dto.SignUpRequest;
 import com.friday.colini.firdaycoliniaccountapi.exception.AccountNotFoundException;
 import com.friday.colini.firdaycoliniaccountapi.repository.AccountRepository;
 import com.friday.colini.firdaycoliniaccountapi.security.UserPrincipal;
@@ -31,12 +31,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Account signUp(AccountDto.SignUpReq accountReq) {
+    public Account signUp(SignUpRequest accountReq) {
         accountReq.encodePassword(passwordEncoder, accountReq.getPassword());
-
-
-        Account account = accountReq.toEntity();
-        return accountRepository.save(account);
+        return accountRepository.save(accountReq.toEntity());
     }
 
     public Account search(long id) {

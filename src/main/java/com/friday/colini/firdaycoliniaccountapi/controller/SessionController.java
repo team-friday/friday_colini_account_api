@@ -14,13 +14,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/session")
 public class SessionController {
 
@@ -38,10 +39,9 @@ public class SessionController {
 
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
-
     private static String authorizationRequestBaseUri = "/oauth2/authorize";
 
-    @GetMapping
+    @GetMapping("/new")
     public String loginPage(Model model) {
         Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
@@ -50,13 +50,15 @@ public class SessionController {
         if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
             clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
         }
+
         clientRegistrations.forEach(
                 registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
         model.addAttribute("urls", oauth2AuthenticationUrls);
         return "login";
     }
 
-    @PostMapping(value = "/sign-in")
+    @PostMapping
+    @ResponseBody
     public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest signInRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

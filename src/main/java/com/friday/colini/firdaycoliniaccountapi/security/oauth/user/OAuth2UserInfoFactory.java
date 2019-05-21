@@ -9,6 +9,7 @@ public class OAuth2UserInfoFactory {
 
     public static OAuth2UserInfo getOAuth2UserInfo(String registrationId,
                                                    Map<String, Object> attributes) {
+
         if (StringUtils.equals(registrationId, AuthProviders.google.name())) {
             return new GoogleOAuth2UserInfo(attributes);
         }
